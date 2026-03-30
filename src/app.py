@@ -51,12 +51,7 @@ def root():
 def get_activities():
     return activities
 
-# Validate student is not already signed up and that max participants is not exceeded   
-if email in activity["participants"]:
-    raise HTTPException(status_code=400, detail="Student already signed up for this activity")
 
-if len(activity["participants"]) >= activity["max_participants"]:
-    raise HTTPException(status_code=400, detail="Activity is at maximum capacity")
 @app.post("/activities/{activity_name}/signup")
 def signup_for_activity(activity_name: str, email: str):
     """Sign up a student for an activity"""
@@ -66,6 +61,13 @@ def signup_for_activity(activity_name: str, email: str):
 
     # Get the specific activity
     activity = activities[activity_name]
+
+    # Validate student is not already signed up and that max participants is not exceeded
+    if email in activity["participants"]:
+        raise HTTPException(status_code=400, detail="Student already signed up for this activity")
+
+    if len(activity["participants"]) >= activity["max_participants"]:
+        raise HTTPException(status_code=400, detail="Activity is at maximum capacity")
 
     # Add student
     activity["participants"].append(email)
